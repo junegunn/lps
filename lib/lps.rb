@@ -35,7 +35,6 @@ class LPS
         diff = nt - now
 
         if diff > 0.01
-          break unless @cond.call
           sleep diff
         elsif diff < 0
           nt = now
