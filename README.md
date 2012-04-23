@@ -25,11 +25,15 @@ Usage
 # - Loops 10 times per second
 # - Loops for 10 seconds
 now = Time.now
-LPS.freq(10).while { Time.now - now < 10 }.loop { # do something }
+LPS.freq(10).while { Time.now - now < 10 }.loop do
+  # do something
+end
 
 # - Loops 10 times per second
 # - Loops indefinitely
-LPS.freq(10).loop { # do something }
+LPS.freq(10).loop do
+  # do something
+end
 ```
 
 Breaking out of the loop
