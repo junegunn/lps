@@ -22,21 +22,21 @@ Usage
 -----
 
 ```ruby
-    # - Loops 10 times per second
-    # - Loops for 10 seconds
-    now = Time.now
-    LPS.freq(10).while { Time.now - now < 10 }.loop { # do something }
+# - Loops 10 times per second
+# - Loops for 10 seconds
+now = Time.now
+LPS.freq(10).while { Time.now - now < 10 }.loop { # do something }
 
-    # - Loops 10 times per second
-    # - Loops indefinitely
-    LPS.freq(10).loop { # do something }
+# - Loops 10 times per second
+# - Loops indefinitely
+LPS.freq(10).loop { # do something }
 ```
 
 Breaking out of the loop
 ------------------------
 
 ```ruby
-    LPS.freq(10).loop { break if rand(10) == 0 }
+LPS.freq(10).loop { break if rand(10) == 0 }
 ```
 
 Falling behind
@@ -48,16 +48,16 @@ which means that if the block execution takes longer than the interval for the g
 it may not be possible to achieve the desired frequency.
 
 ```ruby
-    12.times.map { |i| 1 << i }.each do |ps|
-      cnt = 0
-      now = Time.now
-      LPS.freq(ps).while { Time.now - now <= 1 }.loop do
-        cnt += 1
-        sleep 0.01
-      end
+12.times.map { |i| 1 << i }.each do |ps|
+  cnt = 0
+  now = Time.now
+  LPS.freq(ps).while { Time.now - now <= 1 }.loop do
+    cnt += 1
+    sleep 0.01
+  end
 
-      puts [ps, cnt].join ' => '
-    end
+  puts [ps, cnt].join ' => '
+end
 ```
 
 ```
