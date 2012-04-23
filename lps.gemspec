@@ -4,8 +4,8 @@ require File.expand_path('../lib/lps/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Junegunn Choi"]
   gem.email         = ["junegunn.c@gmail.com"]
-  gem.description   = %q{Rate-controlled loop}
-  gem.summary       = %q{Rate-controlled loop}
+  gem.description   = %q{Rate-controlled loop execution}
+  gem.summary       = %q{Rate-controlled loop execution}
   gem.homepage      = "https://github.com/junegunn/lps"
 
   gem.files         = `git ls-files`.split($\)
