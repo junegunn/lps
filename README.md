@@ -29,9 +29,16 @@ LPS.freq(10).while { Time.now - now < 10 }.loop do
   # do something
 end
 
+
 # - Loops 10 times per second
 # - Loops indefinitely
 LPS.freq(10).loop do
+  # do something
+end
+
+
+# Every 0.1 second
+LPS.interval(0.1).loop do
   # do something
 end
 ```

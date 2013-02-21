@@ -66,5 +66,16 @@ class TestLPS < Test::Unit::TestCase
       puts [ps, cnt].join ' => '
     end
   end
+
+  def test_lps_interval
+    20.times.map { |i| 1 << i }.each do |ps|
+      cnt = 0
+
+      now = Time.now
+      LPS.interval(1.0 / ps).while { Time.now - now <= 1 }.loop { cnt += 1 }
+
+      puts [ps, cnt].join ' => '
+    end
+  end
 end
 
