@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
+$VERBOSE = true
 require 'rubygems'
-$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '../lib')
 require 'lps'
 require 'test-unit'
 
@@ -34,12 +34,19 @@ class TestLPS < Test::Unit::TestCase
     assert_raise(ArgumentError) { LPS.freq(-1) }
   end
 
-  def test_non_number_frequency
-    assert_raise(ArgumentError) { LPS.freq('freq') }
+  def test_invalid_interval
+    assert_raise(ArgumentError) { LPS.interval(-1) }
   end
 
-  def test_non_proc_cond
-    assert_raise(ArgumentError) { LPS.while('freq') }
+  def test_both_freq_and_interval
+    LPS.interval(1).freq(1)
+    assert_raise(ArgumentError) { LPS.interval(1).freq(1).new }
+  end
+
+  def test_non_number_params
+    assert_raise(ArgumentError) { LPS.freq('bad') }
+    assert_raise(ArgumentError) { LPS.interval('bad') }
+    assert_raise(ArgumentError) { LPS.while('bad') }
   end
 
   def test_return_value

@@ -1,54 +1,39 @@
 require "lps/version"
+require 'option_initializer'
 
 class LPS
-  # @param [Numeric] freq Frequency of loop execution (loops/sec)
-  # @return [LPS]
-  def self.freq freq
-    LPS.new.freq freq
-  end
-
-  # @param [Numeric] intv Loop execution interval
-  # @return [LPS]
-  def self.interval intv
-    LPS.new.interval intv
-  end
-
-  # @param [Proc] &cond Loop condition
-  # @return [LPS]
-  def self.while &cond
-    LPS.new.while &cond
-  end
-
-  # @param [Numeric] freq Frequency of loop execution (loops/sec)
-  # @return [LPS]
-  def freq freq
-    LPS.new(:freq => freq, :cond => @cond)
-  end
-
-  # @param [Numeric] intv Loop execution interval
-  # @return [LPS]
-  def interval intv
-    freq(intv == 0 ? nil : (1.0 / intv))
-  end
-
-  # @param [Proc] &cond Loop condition
-  # @return [LPS]
-  def while &cond
-    LPS.new(:freq => @freq, :cond => cond)
+  include OptionInitializer
+  option_initializer :freq, :interval, :while
+  option_validator do |k, v|
+    case k
+    when :freq
+      raise ArgumentError,
+        'frequency must be a positive number (or nil)' unless
+          v.nil? || (v.is_a?(Numeric) && v > 0)
+    when :interval
+      raise ArgumentError,
+        'interval must be a positive number (or zero)' unless
+          v.is_a?(Numeric) && v >= 0
+    when :while
+      raise ArgumentError,
+        'loop condition must respond to call' unless
+          v.respond_to?(:call)
+    end
   end
 
   # @param [Proc] &block Loop
   def loop &block
     ret = nil
+    always = @while.nil?
     if @freq.nil?
-      while @cond.call
+      while always || @while.call
         ret = block.call
       end
     else
       sleep_interval = 1.0 / @freq
 
       nt = Time.now
-      while @cond.call
+      while always || @while.call
         nt += sleep_interval
         ret = block.call
 
@@ -69,16 +54,20 @@ class LPS
   # @option opts [Numeric] :freq Frequency of loop execution (loops/sec)
   # @option opts [#call] :cond Loop condition
   def initialize opts = {}
-    raise ArgumentError, 'Not a Hash' unless opts.is_a?(Hash)
+    validate_options opts
 
-    @freq = opts[:freq]
+    freq, intv, @while = opts.values_at :freq, :interval, :while
     raise ArgumentError,
-      'Frequency must be a positive number (or nil)' unless
-          @freq.nil? || (@freq.is_a?(Numeric) && @freq > 0)
+      "can't have both frequency and interval" if freq && intv
 
-    @cond = opts[:cond] || proc { true }
-    raise ArgumentError, 'Invalid condition block' unless
-        @cond.respond_to?(:call)
+    @freq =
+      if freq
+        freq
+      elsif intv
+        (intv == 0) ? nil : 1.0 / intv
+      else
+        nil
+      end
   end
 end
 
