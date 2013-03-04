@@ -3,7 +3,7 @@ require 'option_initializer'
 
 class LPS
   include OptionInitializer
-  option_initializer :freq, :interval, :while
+  option_initializer! :freq, :interval, :while
   option_validator do |k, v|
     case k
     when :freq
