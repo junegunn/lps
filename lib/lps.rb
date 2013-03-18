@@ -3,22 +3,14 @@ require 'option_initializer'
 
 class LPS
   include OptionInitializer
-  option_initializer! :freq, :interval, :while
-  option_validator do |k, v|
-    case k
-    when :freq
-      raise ArgumentError,
-        'frequency must be a positive number (or nil)' unless
-          v.nil? || (v.is_a?(Numeric) && v > 0)
-    when :interval
-      raise ArgumentError,
-        'interval must be a positive number (or zero)' unless
-          v.is_a?(Numeric) && v >= 0
-    when :while
-      raise ArgumentError,
-        'loop condition must respond to call' unless
-          v.respond_to?(:call)
-    end
+  option_initializer! :freq, :interval => Numeric, :while => :&
+  option_validator :freq do |v|
+    msg = 'frequency must be a positive number (or nil)'
+    raise TypeError, msg unless v.is_a?(Numeric) || v.nil?
+    raise ArgumentError, msg if v.is_a?(Numeric) && v <= 0
+  end
+  option_validator :interval do |v|
+    raise ArgumentError, 'interval must be a non-negative number' if v < 0
   end
 
   # @param [Proc] &block Loop

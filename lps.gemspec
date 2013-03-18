@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = LPS::VERSION
 
-  gem.add_runtime_dependency 'option_initializer', '~> 1.2.0'
+  gem.add_runtime_dependency 'option_initializer', '~> 1.5.0'
   gem.add_development_dependency 'test-unit'
   gem.add_development_dependency 'guard'
   gem.add_development_dependency 'guard-test'

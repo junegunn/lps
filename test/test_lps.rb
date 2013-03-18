@@ -30,12 +30,18 @@ class TestLPS < Test::Unit::TestCase
   end
 
   def test_non_positive_frequency
+    assert_raise(ArgumentError) { LPS.freq {} }
+    assert_raise(ArgumentError) { LPS.freq }
     assert_raise(ArgumentError) { LPS.freq(0) }
     assert_raise(ArgumentError) { LPS.freq(-1) }
+    assert_raise(ArgumentError) { LPS.freq(1, 1) }
   end
 
   def test_invalid_interval
+    assert_raise(ArgumentError) { LPS.interval {} }
+    assert_raise(ArgumentError) { LPS.interval }
     assert_raise(ArgumentError) { LPS.interval(-1) }
+    assert_raise(ArgumentError) { LPS.interval(1, 1) }
   end
 
   def test_both_freq_and_interval
@@ -44,8 +50,8 @@ class TestLPS < Test::Unit::TestCase
   end
 
   def test_non_number_params
-    assert_raise(ArgumentError) { LPS.freq('bad') }
-    assert_raise(ArgumentError) { LPS.interval('bad') }
+    assert_raise(TypeError) { LPS.freq('bad') }
+    assert_raise(TypeError) { LPS.interval('bad') }
     assert_raise(ArgumentError) { LPS.while('bad') }
   end
 
