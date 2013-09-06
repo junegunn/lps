@@ -90,5 +90,57 @@ class TestLPS < Test::Unit::TestCase
       puts [ps, cnt].join ' => '
     end
   end
+
+  def test_freq=
+    st = Time.now
+    i = 0
+    LPS.freq(1).while { i < 100 }.loop do |lps|
+      print i += 1
+      print ' '
+
+      lps.freq = i
+      assert_equal i, lps.freq
+    end
+    assert ((Time.now - st) - (1...100).map { |e| 1.0 / e }.inject(:+)).abs < 0.1
+  end
+
+  def test_freq_to_nil
+    i = 0
+    st = Time.now
+    LPS.freq(1).while { i < 100 }.loop do |lps|
+      print i += 1
+      print ' '
+
+      lps.freq = nil
+    end
+    assert (Time.now - st) < 0.1
+  end
+
+  def test_interval=
+    st = Time.now
+    i = 0
+    LPS.interval(1).while { i < 100 }.loop do |lps|
+      print i += 1
+      print ' '
+
+      lps.interval = 1.0 / i
+      assert_equal 1.0 / i, lps.interval
+    end
+    assert ((Time.now - st) - (1...100).map { |e| 1.0 / e }.inject(:+)).abs < 0.1
+  end
+
+  def test_invalid_freq_interval
+    assert_raise(ArgumentError) do
+      LPS.freq(10).loop do |lps|
+        lps.freq = -1
+      end
+    end
+
+    assert_raise(ArgumentError) do
+      LPS.freq(10).loop do |lps|
+        lps.interval = -1
+      end
+    end
+  end
 end
 

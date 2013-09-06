@@ -1,6 +1,10 @@
 require "lps/version"
 require 'option_initializer'
 
+# @!attribute [r] freq
+#   @return [Number] Loop frequency
+# @!attribute [r] interval
+#   @return [Number] Loop interval (inverse of frequency)
 class LPS
   include OptionInitializer
   option_initializer! :freq, :interval => Numeric, :while => :&
@@ -13,24 +17,32 @@ class LPS
     raise ArgumentError, 'interval must be a non-negative number' if v < 0
   end
 
-  # @param [Proc] &block Loop
+  attr_reader :freq, :interval
+
+  # Main loop
+  # @param [Proc] block Loop
   def loop &block
     ret = nil
     always = @while.nil?
+
     if @freq.nil?
       while always || @while.call
-        ret = block.call
+        ret = block.call self
+
+        # Frequency set!
+        return loop(&block) if @freq
       end
     else
-      sleep_interval = 1.0 / @freq
-
       nt = Time.now
       while always || @while.call
-        nt += sleep_interval
-        ret = block.call
+        ret = block.call self
 
-        now  = Time.now
-        diff = nt - now
+        # Frequency unset!
+        return loop(&block) unless @freq
+
+        nt   += @interval
+        now   = Time.now
+        diff  = nt - now
 
         if diff > 0.01
           sleep diff
@@ -42,9 +54,30 @@ class LPS
     ret
   end
 
+  # Changes loop frequency
+  # @param [Number|nil] f Loop frequency
+  # @return [Number|nil]
+  def freq= f
+    validate_options(:freq => f)
+
+    @freq, @interval = [f, f ? 1.0 / f : 0]
+    @freq
+  end
+
+  # Changes loop interval
+  # @param [Number] intv Loop interval
+  # @return [Number]
+  def interval= intv
+    validate_options(:interval => intv)
+
+    @freq, @interval = [(intv == 0) ? nil : 1.0 / intv, intv]
+    @interval
+  end
+
   # @param [Hash] opts Options Hash.
   # @option opts [Numeric] :freq Frequency of loop execution (loops/sec)
   # @option opts [#call] :cond Loop condition
+  # @private
   def initialize opts = {}
     validate_options opts
 
@@ -60,6 +93,7 @@ class LPS
       else
         nil
       end
+    @interval = @freq ? 1.0 / @freq : 0
   end
 end
 

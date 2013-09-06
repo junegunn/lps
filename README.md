@@ -50,6 +50,17 @@ Breaking out of the loop
 LPS.freq(10).loop { break if rand(10) == 0 }
 ```
 
+Changing loop frequency
+-----------------------
+
+```ruby
+i = 0
+LPS.while { i < 100 }.loop do |lps|
+  print '.'
+  lps.freq = i += 1
+end
+```
+
 Falling behind
 --------------
 
