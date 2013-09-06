@@ -19,4 +19,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'test-unit'
   gem.add_development_dependency 'guard'
   gem.add_development_dependency 'guard-test'
+  gem.add_development_dependency 'rake'
 end
